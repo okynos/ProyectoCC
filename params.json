@@ -1,0 +1,6 @@
+{
+  "name": "ProyectoCC",
+  "tagline": "Proyecto desarrollado en la asignatura de Cloud Computing desplegado en la web",
+  "body": "# ProyectoCC\r\nProyecto desarrollado en la asignatura de Cloud Computing desplegado en la web\r\n\r\nEste proyecto se basa en una página web que permitirá a los usuarios chatear entre sí con conexión y desconexión en tiempo real a la web y todo ello con nodejs.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
