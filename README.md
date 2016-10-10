@@ -1,4 +1,4 @@
-# ProyectoCC
+# ProyectoCC - NodeJs Chat
 Documentación y especificaciones.
 
 ## Breve resumen
