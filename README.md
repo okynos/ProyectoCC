@@ -1,19 +1,19 @@
+![](https://github.com/okynos/ProyectoCC/blob/master/resources/images/logo.png?raw=true)
 # ProyectoCC - NodeJs Chat
-### Jos√© Luis Fern√°ndez Aguilera - Cloud Computing
-Documentaci√≥n y especificaciones.
+### JosÈ Luis Fern·ndez Aguilera - Cloud Computing
+## DocumentaciÛn.
+La documentaciÛn del proyecto se divide en varios subapartados en los cuales se detallan los distintos aspectos de la aplicaciÛn que se va a desarrollar.
 
-## Breve resumen
+### Breve resumen
+Este proyecto se basa en una aplicaciÛn web que permite a los usuarios chatear entre sÌ mediante sockets de la libreria socket.io con conexiÛn y desconexiÛn en tiempo real a la web y todo ello con nodejs.
+Este proyecto variar· en funciÛn de lo aprendido en la asignatura de Cloud Computing incluso llegando a la posibilidad de cambiar totalmente el tipo de proyecto a desarrollar para centrarse m·s en la arquitectura de micro servicios m·s idÛnea para despliegue en la nube facilitando asÌ la escalabilidad del sistema.
+Dividiendo el proyecto entre una aplicaciÛn que realiza las tareas de administraciÛn y gestiÛn de usuarios y los servicios de los que dispone que no tienen porque encontrarse en la misma m·quina y ni siquiera utilizar el mismo lenguaje o ser programadas por mi mismo puede ser de terceros gracias a la utilizaciÛn del protocolo REST.
 
-Este proyecto se basa en una p√°gina web que permitir√° a los usuarios chatear entre s√≠ con conexi√≥n y desconexi√≥n en tiempo real a la web y todo ello con nodejs.
-Se utilizar√° una base de datos MongoDB.
-
-Este proyecto puede ir variando en funci√≥n de lo aprendido en la asignatura de Cloud Computing incluso llegando a la posibilidad de cambiar totalmente el tipo de proyecto a desarrollar para centrarse m√°s en la arquitectura de micro servicios m√°s id√≥nea para despliegue en la nube facilitando as√≠ la escalabilidad del sistema.
-
-Dividiendo el proyecto entre una aplicaci√≥n que realiza las tareas de administraci√≥n y gesti√≥n de usuarios y los servicios de los que dispone que no tienen porque encontrarse en la mism√° m√°quina y ni siquiera utilizar el mismo lenguaje o ser programadas por mi m√≠smo puede ser de terceros gracias a la utilizaci√≥n del protocolo REST.
+### Arquitectura
 
 
-## Correcciones
+### Correcciones
 
-* A√±adido la documentaci√≥n a trav√©s de una rama gh-pages.
+* AÒadido la documentaciÛn a travÈs de una rama gh-pages.
 * Corregidos los issues asociados al hito 0 para que los issues se cierren con commit.
-* A√±adida m√°s documentaci√≥n en este mismo fichero.
+* AÒadida m·s documentaciÛn en este mismo fichero.
