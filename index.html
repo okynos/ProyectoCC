@@ -1,61 +1,118 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <title>Nochat by okynos</title>
 
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
-    <title>ProyectoCC by okynos</title>
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>ProyectoCC</h1>
-        <h2>Proyecto desarrollado en la asignatura de Cloud Computing desplegado en la web</h2>
-        <a href="https://github.com/okynos/ProyectoCC" class="button"><small>View project on</small> GitHub</a>
-      </div>
-    </header>
+    <div class="wrapper">
+      <header>
+        <h1>Nochat</h1>
+        <p>Proyecto desarrollado en la asignatura de Cloud Computing desplegado en la web</p>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
-<a id="proyectocc---nodejs-chat" class="anchor" href="#proyectocc---nodejs-chat" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ProyectoCC - NodeJs Chat</h1>
+        <p class="view"><a href="https://github.com/okynos/ProyectoCC">View the Project on GitHub <small>okynos/ProyectoCC</small></a></p>
 
-<p>Documentación y especificaciones.</p>
+
+        <ul>
+          <li><a href="https://github.com/okynos/ProyectoCC/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/okynos/ProyectoCC/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/okynos/ProyectoCC">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="nochat-" class="anchor" href="#nochat-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NoChat <img src="https://github.com/okynos/ProyectoCC/blob/master/resources/images/logo.png?raw=true" alt="NoChat">
+</h1>
+
+<p><a href="https://github.com/okynos/ProyectoCC/blob/master/LICENSE"><img src="https://img.shields.io/aur/license/yaourt.svg?style=plastic" alt="License"></a>
+<a href="https://github.com/okynos/ProyectoCC/blob/master/README.md"><img src="https://img.shields.io/badge/Status-documenting-yellow.svg" alt="Status"></a>
+<a href="https://nodejs.org/es/"><img src="https://img.shields.io/badge/language-NodeJS-green.svg" alt="Language"></a>
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/language-Python-green.svg" alt="Language"></a>
+<a href="https://golang.org/"><img src="https://img.shields.io/badge/language-Go-green.svg" alt="Language"></a></p>
+
+<h4>
+<a id="josé-luis-fernández-aguilera---cloud-computing" class="anchor" href="#jos%C3%A9-luis-fern%C3%A1ndez-aguilera---cloud-computing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>José Luis Fernández Aguilera - Cloud Computing</h4>
 
 <h2>
-<a id="breve-resumen" class="anchor" href="#breve-resumen" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Breve resumen</h2>
+<a id="documentación" class="anchor" href="#documentaci%C3%B3n" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentación.</h2>
 
-<p>Este proyecto se basa en una página web que permitirá a los usuarios chatear entre sí con conexión y desconexión en tiempo real a la web y todo ello con nodejs.</p>
-        </section>
+<p>La documentación del proyecto se divide en varios subapartados en los cuales se detallan los distintos aspectos de la aplicación que se va a desarrollar.</p>
 
-        <aside id="sidebar">
-          <a href="https://github.com/okynos/ProyectoCC/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/okynos/ProyectoCC/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
+<h3>
+<a id="breve-resumen" class="anchor" href="#breve-resumen" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Breve resumen</h3>
 
-          <p class="repo-owner"><a href="https://github.com/okynos/ProyectoCC"></a> is maintained by <a href="https://github.com/okynos">okynos</a>.</p>
+<p>Este proyecto se basa en una aplicación web que permite a los usuarios chatear entre sí mediante sockets de la libreria socket.io con conexión y desconexión en tiempo real a la web y todo ello con nodejs.
+Este proyecto variará en función de lo aprendido en la asignatura de Cloud Computing incluso llegando a la posibilidad de cambiar totalmente el tipo de proyecto a desarrollar para centrarse más en la arquitectura de micro servicios más idónea para despliegue en la nube facilitando así la escalabilidad del sistema.
+Dividiendo el proyecto entre una aplicación que realiza las tareas de administración y gestión de usuarios y los servicios de los que dispone que no tienen porque encontrarse en la misma máquina y ni siquiera utilizar el mismo lenguaje o ser programadas por mi mismo puede ser de terceros gracias a la utilización del protocolo REST.</p>
 
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+<h3>
+<a id="arquitectura" class="anchor" href="#arquitectura" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Arquitectura</h3>
+
+<p>La arquitectura de la aplicación se basa en una arquitectura de microservicios, en la cual existe un controlador central el cual utilizará un sistema de colas llamado RabbitMQ, que gestionará la llegada de eventos a la aplicación y llamará a los microservicios necesarios para realizar el evento.</p>
+
+<p>En nuestra arquitectura contaremos con 6 microservicios propios:</p>
+
+<ul>
+<li>Microservicio de logeo propio con MongoDB para loguear todos los sucesos de la aplicación.</li>
+<li>Microservicio de gestión de sockets e interconexión entre usuarios.</li>
+<li>Microservicio de monitorización de la carga del sistema en momentos puntuales.</li>
+<li>Microservicio de notificaciones.</li>
+<li>Microservicio de almacenamiento de usuarios con base de datos relacional.</li>
+<li>Microservicio de presentación (interfaz).</li>
+</ul>
+
+<p>También se utilizarán unos microservicios externos:</p>
+
+<ul>
+<li>Microservicio de logueo externo a nuestros microservicios.</li>
+<li>Microservicio de Almacenamiento de datos externo.</li>
+</ul>
+
+<p>Dados todos los microservicios enumerados se puede presuponer que la estructura se basará en una aplicación que hará de gestor/controlador e irá llamando a cada uno de los microservicios que se necesiten en un momento dado. </p>
+
+<h3>
+<a id="desarrollo" class="anchor" href="#desarrollo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Desarrollo</h3>
+
+<p>Esta aplicación que actuará de controlador se programará en NodeJS (Javascript) y usando  RabbitMQ para gestionar las colas de eventos que se produzcan.</p>
+
+<p>En cuanto a los microservicios el lenguaje que se utilizará no está bien definido y se escogerá uno en función de las capacidades o el que mejor se adapte a la tarea se ha descrito en el inio del readme algunos posibles lenguajes que son:</p>
+
+<ul>
+<li>JavaScript o NodeJS</li>
+<li>Python</li>
+<li>Go (para aprender)</li>
+<li>Java</li>
+<li>Otros.</li>
+</ul>
+
+<p>Cada microservicio puede tener un lenguaje independientemente de los demás es por ello que no se especifica ningún lenguaje concreto.</p>
+
+<p>Para comenzar este proyecto se parte de una base ya realizada de un chat en NodeJS pero de estructura monolítica que se adaptará a la arquitectura de microservicios separando y modularizando el código necesario.</p>
+
+<h3>
+<a id="correcciones" class="anchor" href="#correcciones" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Correcciones</h3>
+
+<ul>
+<li>Añadido la documentación a través de una rama gh-pages.</li>
+<li>Corregidos los issues asociados al hito 0 para que los issues se cierren con commit.</li>
+<li>Añadida más documentación en este mismo fichero.</li>
+<li>Añadida arquitectura y breve explicación del desarrollo.</li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/okynos">okynos</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
-
-  
+    <script src="javascripts/scale.fix.js"></script>
+    
   </body>
 </html>
