@@ -2,8 +2,11 @@
 
 [![License](https://img.shields.io/aur/license/yaourt.svg?style=plastic)](https://github.com/okynos/ProyectoCC/blob/master/LICENSE)
 [![Status](https://img.shields.io/badge/Status-documenting-yellow.svg)](https://github.com/okynos/ProyectoCC/blob/master/README.md)
+[![Language](https://img.shields.io/badge/languaje-NodeJS-green.svg)](https://nodejs.org/es/)
+[![Language](https://img.shields.io/badge/languaje-Python-green.svg)](https://www.python.org/)
+[![Language](https://img.shields.io/badge/languaje-Go-green.svg)](https://golang.org/)
+#### José Luis Fernández Aguilera - Cloud Computing
 
-### José Luis Fernández Aguilera - Cloud Computing
 ## Documentación.
 La documentación del proyecto se divide en varios subapartados en los cuales se detallan los distintos aspectos de la aplicación que se va a desarrollar.
 
