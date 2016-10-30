@@ -16,10 +16,39 @@ Este proyecto variará en función de lo aprendido en la asignatura de Cloud Compu
 Dividiendo el proyecto entre una aplicación que realiza las tareas de administración y gestión de usuarios y los servicios de los que dispone que no tienen porque encontrarse en la misma máquina y ni siquiera utilizar el mismo lenguaje o ser programadas por mi mismo puede ser de terceros gracias a la utilización del protocolo REST.
 
 ### Arquitectura
+La arquitectura de la aplicación se basa en una arquitectura de microservicios, en la cual existe un controlador central el cual utilizará un sistema de colas llamado RabbitMQ, que gestionará la llegada de eventos a la aplicación y llamará a los microservicios necesarios para realizar el evento.
 
+En nuestra arquitectura contaremos con 6 microservicios propios:
+- Microservicio de logeo propio con MongoDB para loguear todos los sucesos de la aplicación.
+- Microservicio de gestión de sockets e interconexión entre usuarios.
+- Microservicio de monitorización de la carga del sistema en momentos puntuales.
+- Microservicio de notificaciones.
+- Microservicio de almacenamiento de usuarios con base de datos relacional.
+- Microservicio de presentación (interfaz).
+
+También se utilizarán unos microservicios externos:
+- Microservicio de logueo externo a nuestros microservicios.
+- Microservicio de Almacenamiento de datos externo.
+
+Dados todos los microservicios enumerados se puede presuponer que la estructura se basará en una aplicación que hará de gestor/controlador e irá llamando a cada uno de los microservicios que se necesiten en un momento dado. 
+
+### Desarrollo
+Esta aplicación que actuará de controlador se programará en NodeJS (Javascript) y usando  RabbitMQ para gestionar las colas de eventos que se produzcan.
+
+En cuanto a los microservicios el lenguaje que se utilizará no está bien definido y se escogerá uno en función de las capacidades o el que mejor se adapte a la tarea se ha descrito en el inio del readme algunos posibles lenguajes que son:
+- JavaScript o NodeJS
+- Python
+- Go (para aprender)
+- Java
+- Otros.
+
+Cada microservicio puede tener un lenguaje independientemente de los demás es por ello que no se especifica ningún lenguaje concreto.
+
+Para comenzar este proyecto se parte de una base ya realizada de un chat en NodeJS pero de estructura monolítica que se adaptará a la arquitectura de microservicios separando y modularizando el código necesario.
 
 ### Correcciones
 
 * Añadido la documentación a través de una rama gh-pages.
 * Corregidos los issues asociados al hito 0 para que los issues se cierren con commit.
 * Añadida más documentación en este mismo fichero.
+* Añadida arquitectura y breve explicación del desarrollo.
