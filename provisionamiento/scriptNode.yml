@@ -3,6 +3,8 @@
   become: yes
   remote_user: ubuntu
   tasks:
+  - name: Install NodeJS
+    apt: pkg=nodejs state=installed
   - name: Install NodeJS dev
     apt: pkg=nodejs-dev state=installed
   - name: Install Npm utilities

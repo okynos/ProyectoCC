@@ -12,6 +12,4 @@
     apt: pkg=mysql-server state=installed
   - name: Install RabbitMQ Server
     apt: pkg=rabbitmq-server state=installed
-  - name: Install NodeJS
-    apt: pkg=nodejs state=installed
 
