@@ -1,0 +1,15 @@
+---
+- hosts: stack
+  become: yes
+  remote_user: ubuntu
+  tasks:
+  - name: Install NodeJS dev
+    apt: pkg=nodejs-dev state=installed
+  - name: Install Npm utilities
+    apt: pkg=npm state=installed
+  
+  - name: Install Socket.io dependency
+    npm: name=socket.io global=yes path=~/nodejs/socket.io 
+
+  - name: Install Express dependency
+    npm: name=express global=yes path=~/nodejs/express
