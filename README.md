@@ -7,6 +7,10 @@
 [![Language](https://img.shields.io/badge/language-Go-green.svg)](https://golang.org/)
 #### José Luis Fernández Aguilera - Cloud Computing
 
+#### ¡Novedades! 
+* Provisionamiento
+* Documentación sobre servicios (corregida falta hito 1)
+
 ## Documentación.
 La documentación del proyecto se divide en varios subapartados en los cuales se detallan los distintos aspectos de la aplicación que se va a desarrollar.
 
@@ -21,21 +25,20 @@ La arquitectura de la aplicación se basa en una arquitectura de microservicios, 
 En nuestra arquitectura contaremos con 6 microservicios propios:
 - Microservicio de logeo propio con MongoDB para loguear todos los sucesos de la aplicación.
 - Microservicio de gestión de sockets e interconexión entre usuarios.
-- Microservicio de monitorización de la carga del sistema en momentos puntuales.
 - Microservicio de notificaciones.
-- Microservicio de almacenamiento de usuarios con base de datos relacional.
-- Microservicio de presentación (interfaz).
+- Microservicio de gestión del almacenamiento de usuarios utilizando una base de datos relacional.
+- Microservicio de presentación y gestión (interfaz).
 
 También se utilizarán unos microservicios externos:
-- Microservicio de logueo externo a nuestros microservicios.
-- Microservicio de Almacenamiento de datos externo.
+- Microservicio de logging de datos del servidor externo a nuestros microservicios.
+- Microservicio de gestión del almacenamiento redundante de datos externo.
 
 Dados todos los microservicios enumerados se puede presuponer que la estructura se basará en una aplicación que hará de gestor/controlador e irá llamando a cada uno de los microservicios que se necesiten en un momento dado. 
 
 ### Desarrollo
-Esta aplicación que actuará de controlador se programará en NodeJS (Javascript) y usando  RabbitMQ para gestionar las colas de eventos que se produzcan.
+Esta aplicación que actuará de controlador se programará en NodeJS (Javascript) y utilizará el servicio de RabbitMQ para gestionar las colas de eventos que se produzcan.
 
-En cuanto a los microservicios el lenguaje que se utilizará no está bien definido y se escogerá uno en función de las capacidades o el que mejor se adapte a la tarea se ha descrito en el inio del readme algunos posibles lenguajes que son:
+En cuanto a los lenguajes que se utilizarán en los microservicios no está bien definido y se escogerán varios en función de las capacidades o el que mejor se adapte a la tarea que se ha descrito en el inicio del readme, algunos posibles lenguajes son:
 - JavaScript o NodeJS
 - Python
 - Go (para aprender)
@@ -46,9 +49,66 @@ Cada microservicio puede tener un lenguaje independientemente de los demás es po
 
 Para comenzar este proyecto se parte de una base ya realizada de un chat en NodeJS pero de estructura monolítica que se adaptará a la arquitectura de microservicios separando y modularizando el código necesario.
 
+### Provisionamiento
+Para desplegar esta aplicación son necesarios una serie de aplicaciones de tipo servidor, que la mayoría de distribuciones no incorporan en su imagen base, es por ello que vamos a realizar un provisionamiento de los paquetes básicos, que necesitarán luego nuestras aplicaciones en las máquinas desplegadas en la red, para ello podemos utilizar varios lenguajes de provisionamiento de máquinas como pueden ser Chef, Salt, Rex, Puppet, Ansible y alguno más que no he nombrado pero en nuestro caso vamos a realizarlo en dos sistemas diferentes, Ansible y Rex.
+
+##### Provisionando con Ansible
+Ansible es una aplicación de provisionamiento que permite la instalación de paquetes a través de una consola python la cual puede ejecutar cualquier tipo de instrucción que se define en un lenguaje de descripción llamado en este caso YAML.
+
+Para empezar a provisionar en Ansible es necesario asegurarse que la máquina que queremos provisionar cuenta con una instalación de python2.7 dado que es la versión que utiliza, si queremos instalar módulos de python será necesario tambien el paquete python-pip.
+
+inicialmente es necesario intalar en la máquina que provisiona/anfitrión unos módulo python que utilizará ansible y el propio ansible con el comando:
+
+```
+sudo pip install paramiko PyYAML jinja2 httplib2 ansible
+```
+
+Una vez se hayan instalado todas las dependencias es mejor para nuestro diseño crearnos un archivo de hosts el cual Ansible utilizará para provisionar las máquinas que definamos en él y lo exportamos como variable de entorno.
+
+```
+echo "[NOMBRE GRUPO MÁQUINAS]" > ~/ansible_hosts
+echo "IP O DIRECCIÓN DE LA MÁQUINA" >> ~/ansible_hosts
+export ANSIBLE_HOSTS=~/ansible_hosts
+```
+
+Con esto ya tendríamos toda la configuración de la parte de ansible realizada, sólo necesitamos lanzar el script con la siguiente orden y observar la salida que nos va dando, los scripts de provisionamiento se pueden encontrar [aquí](https://github.com/okynos/ProyectoCC/tree/master/provisionamiento):
+
+```
+ansible-playbook scriptAnsible.yml --private-key keypair.pem
+```
+
+Donde keypair es vuestra clave de acceso a la máquina por ssh, si tenéis copiada una clave pública en la máquina remota no sería necesario este parámetro, es porsible que tengais que cambiar el nombre de usuario en el script o ponerlo por línea de órdenes con la opción -u para conectaros con el usuario de vuestra máquina remota.
+
+
+##### Provisionando con Rex
+En este caso para instalar Rex sólo es necesario instalar el paquete llamado rex desde línea de comandos en Ubuntu, en otros casos será necesario ejecutar la siguiente orden:
+
+```
+curl -L https://get.rexify.org | perl - --sudo -n Rex
+```
+
+Esto descargará e instalará Rex en nuestro equipo, una vez hecho esto ya podemos empezar a escribir un script de provisionamiento.
+
+Rex utiliza un lenguaje descriptivo al igual que otras aplicaciones el script de provisionamiento que se ha creado está [aquí](https://github.com/okynos/ProyectoCC/tree/master/provisionamiento):
+
+
+Este script se debe llamar Rexfile y está dividido en dos tareas dependiendo del tipo de servicio que queramos provisionar en nuestro caso son "deployServers" para instalar todos los servidores (RabbitMQ, Mysql, Mongo) y "deployNode" para instalar NodeJs y todas las dependencias requeridas.
+
+Para ejecutar este script sólo es necesario lanzar la siguiente orden en el directorio donde se encuentre el fichero Rexfile:
+
+```
+rex deployServers
+rex deplouNode
+```
+
+Dependiendo del servicio que queramos provisionar lanzaremos un comando u otro para instalar los paquetes que se hayan codificado en el Rexfile.
+
+
 ### Correcciones
 
-* Añadido la documentación a través de una rama gh-pages.
-* Corregidos los issues asociados al hito 0 para que los issues se cierren con commit.
-* Añadida más documentación en este mismo fichero.
-* Añadida arquitectura y breve explicación del desarrollo.
+* Añadido la documentación a través de una rama gh-pages. -> hito 0
+* Corregidos los issues asociados al hito 0 para que los issues se cierren con commit. -> hito 0
+* Añadida más documentación en este mismo fichero. -> hito 0
+* Añadida arquitectura y breve explicación del desarrollo. -> hito 1
+* Añadido procedimiento de provisionamiento. -> hito 2
+* Añadida aclaración de los microservicios. -> hito 2
