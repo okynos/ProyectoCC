@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: yes
+  remote_user: ubuntu
+  tasks:
+  - name: Update repo
+    apt: 
+      update_cache: yes
+  - name: Install MongoDB Server
+    apt: pkg=mongodb-server state=installed
+  - name: Install Mysql Server
+    apt: pkg=mysql-server state=installed
+  - name: Install RabbitMQ Server
+    apt: pkg=rabbitmq-server state=installed
+
