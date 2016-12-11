@@ -41,6 +41,14 @@
 <h4>
 <a id="josé-luis-fernández-aguilera---cloud-computing" class="anchor" href="#jos%C3%A9-luis-fern%C3%A1ndez-aguilera---cloud-computing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>José Luis Fernández Aguilera - Cloud Computing</h4>
 
+<h4>
+<a id="novedades" class="anchor" href="#novedades" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>¡Novedades!</h4>
+
+<ul>
+<li>Provisionamiento</li>
+<li>Documentación sobre servicios (corregida falta hito 1)</li>
+</ul>
+
 <h2>
 <a id="documentación" class="anchor" href="#documentaci%C3%B3n" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentación.</h2>
 
@@ -63,17 +71,16 @@ Dividiendo el proyecto entre una aplicación que realiza las tareas de administr
 <ul>
 <li>Microservicio de logeo propio con MongoDB para loguear todos los sucesos de la aplicación.</li>
 <li>Microservicio de gestión de sockets e interconexión entre usuarios.</li>
-<li>Microservicio de monitorización de la carga del sistema en momentos puntuales.</li>
 <li>Microservicio de notificaciones.</li>
-<li>Microservicio de almacenamiento de usuarios con base de datos relacional.</li>
-<li>Microservicio de presentación (interfaz).</li>
+<li>Microservicio de gestión del almacenamiento de usuarios utilizando una base de datos relacional.</li>
+<li>Microservicio de presentación y gestión (interfaz).</li>
 </ul>
 
 <p>También se utilizarán unos microservicios externos:</p>
 
 <ul>
-<li>Microservicio de logueo externo a nuestros microservicios.</li>
-<li>Microservicio de Almacenamiento de datos externo.</li>
+<li>Microservicio de logging de datos del servidor externo a nuestros microservicios.</li>
+<li>Microservicio de gestión del almacenamiento redundante de datos externo.</li>
 </ul>
 
 <p>Dados todos los microservicios enumerados se puede presuponer que la estructura se basará en una aplicación que hará de gestor/controlador e irá llamando a cada uno de los microservicios que se necesiten en un momento dado. </p>
@@ -81,9 +88,9 @@ Dividiendo el proyecto entre una aplicación que realiza las tareas de administr
 <h3>
 <a id="desarrollo" class="anchor" href="#desarrollo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Desarrollo</h3>
 
-<p>Esta aplicación que actuará de controlador se programará en NodeJS (Javascript) y usando  RabbitMQ para gestionar las colas de eventos que se produzcan.</p>
+<p>Esta aplicación que actuará de controlador se programará en NodeJS (Javascript) y utilizará el servicio de RabbitMQ para gestionar las colas de eventos que se produzcan.</p>
 
-<p>En cuanto a los microservicios el lenguaje que se utilizará no está bien definido y se escogerá uno en función de las capacidades o el que mejor se adapte a la tarea se ha descrito en el inio del readme algunos posibles lenguajes que son:</p>
+<p>En cuanto a los lenguajes que se utilizarán en los microservicios no está bien definido y se escogerán varios en función de las capacidades o el que mejor se adapte a la tarea que se ha descrito en el inicio del readme, algunos posibles lenguajes son:</p>
 
 <ul>
 <li>JavaScript o NodeJS</li>
@@ -98,13 +105,68 @@ Dividiendo el proyecto entre una aplicación que realiza las tareas de administr
 <p>Para comenzar este proyecto se parte de una base ya realizada de un chat en NodeJS pero de estructura monolítica que se adaptará a la arquitectura de microservicios separando y modularizando el código necesario.</p>
 
 <h3>
+<a id="provisionamiento" class="anchor" href="#provisionamiento" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Provisionamiento</h3>
+
+<p>Para desplegar esta aplicación son necesarios una serie de aplicaciones de tipo servidor, que la mayoría de distribuciones no incorporan en su imagen base, es por ello que vamos a realizar un provisionamiento de los paquetes básicos, que necesitarán luego nuestras aplicaciones en las máquinas desplegadas en la red, para ello podemos utilizar varios lenguajes de provisionamiento de máquinas como pueden ser Chef, Salt, Rex, Puppet, Ansible y alguno más que no he nombrado pero en nuestro caso vamos a realizarlo en dos sistemas diferentes, Ansible y Rex.</p>
+
+<h5>
+<a id="provisionando-con-ansible" class="anchor" href="#provisionando-con-ansible" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Provisionando con Ansible</h5>
+
+<p>Ansible es una aplicación de provisionamiento que permite la instalación de paquetes a través de una consola python la cual puede ejecutar cualquier tipo de instrucción que se define en un lenguaje de descripción llamado en este caso YAML.</p>
+
+<p>Para empezar a provisionar en Ansible es necesario asegurarse que la máquina que queremos provisionar cuenta con una instalación de python2.7 dado que es la versión que utiliza, si queremos instalar módulos de python será necesario tambien el paquete python-pip.</p>
+
+<p>inicialmente es necesario intalar en la máquina que provisiona/anfitrión unos módulo python que utilizará ansible y el propio ansible con el comando:</p>
+
+<pre><code>sudo pip install paramiko PyYAML jinja2 httplib2 ansible
+</code></pre>
+
+<p>Una vez se hayan instalado todas las dependencias es mejor para nuestro diseño crearnos un archivo de hosts el cual Ansible utilizará para provisionar las máquinas que definamos en él y lo exportamos como variable de entorno.</p>
+
+<pre><code>echo "[NOMBRE GRUPO MÁQUINAS]" &gt; ~/ansible_hosts
+echo "IP O DIRECCIÓN DE LA MÁQUINA" &gt;&gt; ~/ansible_hosts
+export ANSIBLE_HOSTS=~/ansible_hosts
+</code></pre>
+
+<p>Con esto ya tendríamos toda la configuración de la parte de ansible realizada, sólo necesitamos lanzar el script con la siguiente orden y observar la salida que nos va dando, los scripts de provisionamiento se pueden encontrar <a href="https://github.com/okynos/ProyectoCC/tree/master/provisionamiento">aquí</a>:</p>
+
+<pre><code>ansible-playbook scriptAnsible.yml --private-key keypair.pem
+</code></pre>
+
+<p>Donde keypair es vuestra clave de acceso a la máquina por ssh, si tenéis copiada una clave pública en la máquina remota no sería necesario este parámetro, es porsible que tengais que cambiar el nombre de usuario en el script o ponerlo por línea de órdenes con la opción -u para conectaros con el usuario de vuestra máquina remota.</p>
+
+<h5>
+<a id="provisionando-con-rex" class="anchor" href="#provisionando-con-rex" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Provisionando con Rex</h5>
+
+<p>En este caso para instalar Rex sólo es necesario instalar el paquete llamado rex desde línea de comandos en Ubuntu, en otros casos será necesario ejecutar la siguiente orden:</p>
+
+<pre><code>curl -L https://get.rexify.org | perl - --sudo -n Rex
+</code></pre>
+
+<p>Esto descargará e instalará Rex en nuestro equipo, una vez hecho esto ya podemos empezar a escribir un script de provisionamiento.</p>
+
+<p>Rex utiliza un lenguaje descriptivo al igual que otras aplicaciones el script de provisionamiento que se ha creado está <a href="https://github.com/okynos/ProyectoCC/tree/master/provisionamiento">aquí</a>:</p>
+
+<p>Este script se debe llamar Rexfile y está dividido en dos tareas dependiendo del tipo de servicio que queramos provisionar en nuestro caso son "deployServers" para instalar todos los servidores (RabbitMQ, Mysql, Mongo) y "deployNode" para instalar NodeJs y todas las dependencias requeridas.</p>
+
+<p>Para ejecutar este script sólo es necesario lanzar la siguiente orden en el directorio donde se encuentre el fichero Rexfile:</p>
+
+<pre><code>rex deployServers
+rex deplouNode
+</code></pre>
+
+<p>Dependiendo del servicio que queramos provisionar lanzaremos un comando u otro para instalar los paquetes que se hayan codificado en el Rexfile.</p>
+
+<h3>
 <a id="correcciones" class="anchor" href="#correcciones" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Correcciones</h3>
 
 <ul>
-<li>Añadido la documentación a través de una rama gh-pages.</li>
-<li>Corregidos los issues asociados al hito 0 para que los issues se cierren con commit.</li>
-<li>Añadida más documentación en este mismo fichero.</li>
-<li>Añadida arquitectura y breve explicación del desarrollo.</li>
+<li>Añadido la documentación a través de una rama gh-pages. -&gt; hito 0</li>
+<li>Corregidos los issues asociados al hito 0 para que los issues se cierren con commit. -&gt; hito 0</li>
+<li>Añadida más documentación en este mismo fichero. -&gt; hito 0</li>
+<li>Añadida arquitectura y breve explicación del desarrollo. -&gt; hito 1</li>
+<li>Añadido procedimiento de provisionamiento. -&gt; hito 2</li>
+<li>Añadida aclaración de los microservicios. -&gt; hito 2</li>
 </ul>
       </section>
       <footer>
