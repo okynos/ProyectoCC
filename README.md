@@ -8,8 +8,14 @@
 #### José Luis Fernández Aguilera - Cloud Computing
 
 #### ¡Novedades! 
+* Orquestación
+
+## Indice
+* Resumen
+* Arquitectura
+* Desarrollo
 * Provisionamiento
-* Documentación sobre servicios (corregida falta hito 1)
+* Orquestación
 
 ## Documentación.
 La documentación del proyecto se divide en varios subapartados en los cuales se detallan los distintos aspectos de la aplicación que se va a desarrollar.
@@ -103,6 +109,172 @@ rex deplouNode
 
 Dependiendo del servicio que queramos provisionar lanzaremos un comando u otro para instalar los paquetes que se hayan codificado en el Rexfile.
 
+
+### Orquestación
+Para orquestación de máquinas virtuales se ha utilizado la herramienta de orquestación configuración y en algunos momentos provisionamiento llamada vagrant la cual permite lanzar instancias de una misma imagen o box como se denominan a las imágenes ya preparadas para ser utilizadas con vagrant, en este caso hemos realizado orquestación de tres formas diferentes que pasamos a detallar pero antes es necesario explicar los pasos que se requieren para instalar vagrant en nuestra máquina anfitrión.
+
+Para instalar vagrant se pued erecurrir al repositorio oficial de vuestra distribución que es posible que contenga una versión un tanto antigua(1.8.1) en mi caso a si que podemos descargar la última versión desde la [página de vagrant](https://www.vagrantup.com/downloads.html) de nuevo en mi caso la instalación de la última versión no me ha funcionado correctamente por lo tanto yo recomiendo la 1.8.7, podemos seguir estos comandos para descargarla e instalarla:
+
+```
+wget https://releases.hashicorp.com/vagrant/1.8.7/vagrant_1.8.7_x86_64.deb
+sudo dpkg -i vagrant_1.8.7_x86_64.deb
+sudo apt-get install ruby
+```
+
+una vez tenemos vagrant disponible pasamos a la parte de orquestación.
+
+
+##### Orquestación vagrant y virtualbox
+En este caso vamos a orquestar máquinas virtuales en nuestra propia máquina, para ello necesitamos instalar algún proveedor de virtualización como es el caso de virtualbox, al igual que con vagrant es necesario instalarlo por lo que nos dirigimos a la [página de virtualbox](https://www.virtualbox.org/) o nos lo descargamos e instalamos con los siguientes comandos(Ubuntu 16.04 x64):
+
+```
+wget http://download.virtualbox.org/virtualbox/5.1.10/virtualbox-5.1_5.1.10-112026~Ubuntu~xenial_amd64.deb
+sudo dpkg -i virtualbox-5.1_5.1.10-112026~Ubuntu~xenial_amd64.deb
+```
+
+En algunos tipos de virtualizaciones nos puede ser útil el pack de extensiones de virtualbox lo podemos instalar así:
+
+```
+wget http://download.virtualbox.org/virtualbox/5.1.10/Oracle_VM_VirtualBox_Extension_Pack-5.1.10-112026.vbox-extpack
+sudo VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.1.10-112026.vbox-extpack
+```
+
+Ahora necesitamos una imagen de un sistema operativo para lanzarlo a través de virtualbox, para ello ejecutamos el comando:
+
+```
+vagrant box add https://atlas.hashicorp.com/ARTACK/boxes/debian-jessie
+```
+Nos descargará una imagen de Debian Jessie llamada en este caso ARTACK/debian-jessie ahora la inicializamos y lanzamos con:
+
+```
+vagrant init ARTACK/debian-jessie
+vagrant up
+vagrant ssh
+```
+De esta forma utilizando varios directorios podemos lanzar las máquinas que necesitemos orquestar y conectarnos a ellas.
+
+
+##### Orquestación vagrant y libvirt
+En este caso vamos a orquestar máquinas virtuales de la misma manera que con virtualbox, en una máquina local pero en vez de utilizar virtualbox, vamos a utilizar una libreria llamada libvirt la cual se encarga de adaptar las instrucciones de vagrant a cualquiera de los sistemas de virtualización basados en linux como qemu(KVM) o lxc para realizar orquestación con libvirt solo es necesario seguir los siguientes pasos:
+
+```
+sudo apt-get install qemu libvirt-bin libvirt0 ebtables dnsmasq
+sudo apt-get install libxslt1-dev libxml2-dev libvirt-dev zlib1g-dev ruby-dev
+sudo vagrant plugin install vagrant-libvirt
+gem pristine ruby-libvirt
+```
+Este proceso nos va a instalar todas las dependencias de libvirt y a instalar el plugin en vagrant ya solo necesitamos configurar la imagen`para probar libvirt vamos a descargar una imagen preparada para virtualizarse con KVM.
+
+```
+vagrant box add https://atlas.hashicorp.com/viniciusfs/boxes/centos6/
+```
+Esto nos descargará una distro llamada viniciusfs/centos6`la inicializamos y lanzamos.
+
+```
+vagrant init viniciusfs/centos6
+vagrant up --provider=libvirt
+vagrant ssh
+```
+Es necesario especificar el proveedor.
+
+##### Orquestación vagrant y OpenStack
+Finalmente solo nos queda la orquestación más compleja orquestación en un servidor remoto, en nuestro caso vamos a utilizar la plataforma gratuita trystack la cual nos permite orquestar hasta 3 máquinas virtuales aunque con algunas limitaciones.
+
+En un primer paso ya deberíamos tener configurado tanto vagrant como todas las dependencias que fueran necesarias por lo tanto nos saltamos algunos pasos y ejecutamos:
+
+```
+sudo vagrant plugin install vagrant-openstack-provider
+```
+Esto nos instalará el plugin de openstack para vagrant, una vez instalado nos dirigimos a un directorio vacío y creamos un Vagrantfile con el siguiente contenido para conectar con trystack:
+
+```
+Vagrant.configure(2) do |config|
+
+  # Specify the default SSH username and private key
+  config.ssh.username = "NOMBRE_DE_USUARIO_EN_LA_IMAGEN"
+  config.ssh.private_key_path = "PATH_AL_FICHERO_PEM"
+
+  # Configure the OpenStack provider for Vagrant
+  config.vm.provider "openstack" do |os|
+
+    # Specify OpenStack authentication information
+    os.openstack_auth_url = "http://DIRECCIÓN_SERVIDOR_OPENSTACK:5000/v2.0"
+    os.username = "USUARIO_OPENSTACK"
+    os.password = "CLAVE_OPENSTACK"
+    os.tenant_name = "NOMBRE_DEL_PROYECTO"
+
+    # Specify instance information
+    os.server_name = "NOMBRE_DE_LA_MÁQUINA_A_CREAR"
+    os.flavor = "m1.smaller"
+    os.image = "NOMBRE_DE_LA_IMAGEN_EN_OPENSTACK"
+    os.floating_ip_pool = "public"
+    os.networks = "RED_OPENSTACK"
+    os.keypair_name = "NOMBRE_DEL_FICHERO_PEM"
+    os.security_groups = ["default"]
+  end
+end
+```
+
+Será necesario que modifiques el fichero con la configuración propia que Openstack o Trystack proporciona.
+Para finalizar solo será necesario lanzar vagrant y se creará la máquina en el servidor remoto.
+
+```
+sudo vagrant up
+ansible-playbook scriptAnsible.yml --private-key PATH_A_FICHERO_PEM
+```
+
+Y si queremos destruir la instancia solo tenemos que hacer:
+```
+sudo vagrant destroy
+```
+
+
+##### Provisionamiento y orquestación
+Un último paso necesario tras la orquestación es el provisionamiento, el cual en este caso se realiza a través del propio vagrant con ejecuciones shell pero eso no es práctico ya que las imágenes pueden variar su intérprete por lo tanto es mucho más cómodo provisionar como hasta ahora lo hemos hecho en nuestro caso con Rex o Ansible los cuales son capaces de provisionar las máquinas orquestadas con vagrant de una manera sencilla tras crear una instancia con vagrant solo es necesario llamar a Rex o a Ansible con una orden indicandole la dirección que tiene que provisionar de esta manera podemos orquestar y provisionar multitud de máquinas de manera muy rápida.
+
+Un ejemplo para provisionar una máquina instanciada con vagrant y provisionada con Ansible es el siguiente:
+
+```
+sudo vagrant up
+ansible-playbook scriptAnsible.yml --private-key ~/keys/keypair.pem
+```
+
+En caso que deseemos provisionar la máquina de openstack al mismo tiempo que la creamos es necesario añadir este código al vagrantfile
+```
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "scriptAnsible.yml"
+    ansible.limit = "all"
+    ansible.raw_arguments = ["-i" + floating_ip + ","]
+  end
+```
+Dentro de la zona de config de vagrant.
+
+Y modificar ligeramente el script cambiando la línea hosts para que provisiones todas las máquinas que se le pasen como parámetro.
+```
+---
+- hosts: all
+  become: yes
+  remote_user: ubuntu
+  tasks:
+  - name: Update repo
+    apt: 
+      update_cache: yes
+  - name: Install MongoDB Server
+    apt: pkg=mongodb-server state=installed
+  - name: Install Mysql Server
+    apt: pkg=mysql-server state=installed
+  - name: Install RabbitMQ Server
+    apt: pkg=rabbitmq-server state=installed
+```
+
+Finalmente para provisionar la máquina ejecutamos el comando:
+```
+sudo vagrant provision
+```
+
+En el caso de querer lanzar y provisionar varias máquinas al mismo tiempo en OpenStack es posible pero no en la cuenta limitada de Trystack, en la sección de orquestación de este proyecto puedes encontrarlo, aún así te lo enlazo [aquí](https://github.com/okynos/ProyectoCC/blob/master/orquestacion/Vagrantfile)
+
+Para ello es necesario definir varias máquinas en el vagrantfile y provisionarlas con ansible, el problema de trystack es que solo proporciona una IP por lo que solo podremos provisionar una sola máquina al mismo tiempo sin cambiar esa IP.
 
 ### Correcciones
 
