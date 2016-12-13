@@ -18,19 +18,20 @@ otro proveedor, ya que es lo más normal hoy en día en vez de orquestar de una 
 A continuación se muestran las dos capturas tomadas que demuestran la veracidad de que ha sido ejecutado el script por Manuel Blanco Rienda y que
  se verfica que es correcto: [Captura 1](https://github.com/manuelbr/Proyecto_CC/blob/gh-pages/images/jose3_1.png) [Captura 2](https://github.com/manuelbr/Proyecto_CC/blob/gh-pages/images/jose3_2.png)
 
- ### Nombre del alumno
+
+### Nombre del alumno
 Jose Manuel Moya Baena
 
- ### Nombre del script
- Vagrantfile
+### Nombre del script
+Vagrantfile
 
- ### Errores encontrados
- No se han encontrado errores aparentes.
+### Errores encontrados
+No se han encontrado errores aparentes.
 
- ### Comentarios
- He logrado hacer funcionar la orquestacion de la maquina con centOS, pero no la debian. El problema quiza resida en la version de *vagrant* o *virtualbox* que estoy usando, ya que el anterior compañero las ha logrado ejecutar correctamente.
+### Comentarios
+He logrado hacer funcionar la orquestacion de la maquina con centOS, pero no la debian. El problema quiza resida en la version de *vagrant* o *virtualbox* que estoy usando, ya que el anterior compañero las ha logrado ejecutar correctamente.
 
- Aun asi, he analizado el codigo en los archivos Vagrantfile y todo parece correcto.
+Aun asi, he analizado el codigo en los archivos Vagrantfile y todo parece correcto.
 
- ### Documentación
- A continuacion se muestran las capturas con las ejecuciones de ambos script [centOS](https://github.com/jose999/PlayAnywhere/blob/master/provisionamiento/imagenes/correccion/centOS.png) [Debian](https://github.com/jose999/PlayAnywhere/blob/master/provisionamiento/imagenes/correccion/debian)
+### Documentación
+A continuacion se muestran las capturas con las ejecuciones de ambos script [centOS](https://github.com/jose999/PlayAnywhere/blob/master/provisionamiento/imagenes/correccion/centOS.png) [Debian](https://github.com/jose999/PlayAnywhere/blob/master/provisionamiento/imagenes/correccion/debian)
