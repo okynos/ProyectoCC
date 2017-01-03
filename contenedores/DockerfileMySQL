@@ -1,0 +1,9 @@
+FROM alpine
+MAINTAINER Okynos <pylott@gmail.com>
+WORKDIR /root
+CMD ["/bin/ash"]
+
+RUN apk update && apk upgrade
+RUN apk add git
+RUN apk add curl
+RUN apk add mysql
