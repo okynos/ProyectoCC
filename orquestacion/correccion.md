@@ -1,4 +1,4 @@
-# Corrección del script de orquestación + provisionamiento(Ansible)
+# Corrección del script de orquestación + provisionamiento(Ansible) - José Luis Fernández Aguilera
 
 ### Nombre del alumno
 Manuel Blanco Rienda
@@ -18,6 +18,7 @@ otro proveedor, ya que es lo más normal hoy en día en vez de orquestar de una 
 A continuación se muestran las dos capturas tomadas que demuestran la veracidad de que ha sido ejecutado el script por Manuel Blanco Rienda y que
  se verfica que es correcto: [Captura 1](https://github.com/manuelbr/Proyecto_CC/blob/gh-pages/images/jose3_1.png) [Captura 2](https://github.com/manuelbr/Proyecto_CC/blob/gh-pages/images/jose3_2.png)
 
+---
 
 ### Nombre del alumno
 Jose Manuel Moya Baena
