@@ -7,8 +7,12 @@
 [![Language](https://img.shields.io/badge/language-Go-green.svg)](https://golang.org/)
 #### José Luis Fernández Aguilera - Cloud Computing
 
+
+
 #### ¡Novedades! 
-* Orquestación
+* Contenedores
+
+
 
 ## Indice
 * Resumen
@@ -16,14 +20,21 @@
 * Desarrollo
 * Provisionamiento
 * Orquestación
+* Contenedores
+
+
 
 ## Documentación.
 La documentación del proyecto se divide en varios subapartados en los cuales se detallan los distintos aspectos de la aplicación que se va a desarrollar.
+
+
 
 ### Breve resumen
 Este proyecto se basa en una aplicación web que permite a los usuarios chatear entre sí mediante sockets de la libreria socket.io con conexión y desconexión en tiempo real a la web y todo ello con nodejs.
 Este proyecto variará en función de lo aprendido en la asignatura de Cloud Computing incluso llegando a la posibilidad de cambiar totalmente el tipo de proyecto a desarrollar para centrarse más en la arquitectura de micro servicios más idónea para despliegue en la nube facilitando así la escalabilidad del sistema.
 Dividiendo el proyecto entre una aplicación que realiza las tareas de administración y gestión de usuarios y los servicios de los que dispone que no tienen porque encontrarse en la misma máquina y ni siquiera utilizar el mismo lenguaje o ser programadas por mi mismo puede ser de terceros gracias a la utilización del protocolo REST.
+
+
 
 ### Arquitectura
 La arquitectura de la aplicación se basa en una arquitectura de microservicios, en la cual existe un controlador central el cual utilizará un sistema de colas llamado RabbitMQ, que gestionará la llegada de eventos a la aplicación y llamará a los microservicios necesarios para realizar el evento.
@@ -41,6 +52,8 @@ También se utilizarán unos microservicios externos:
 
 Dados todos los microservicios enumerados se puede presuponer que la estructura se basará en una aplicación que hará de gestor/controlador e irá llamando a cada uno de los microservicios que se necesiten en un momento dado. 
 
+
+
 ### Desarrollo
 Esta aplicación que actuará de controlador se programará en NodeJS (Javascript) y utilizará el servicio de RabbitMQ para gestionar las colas de eventos que se produzcan.
 
@@ -55,8 +68,12 @@ Cada microservicio puede tener un lenguaje independientemente de los demás es po
 
 Para comenzar este proyecto se parte de una base ya realizada de un chat en NodeJS pero de estructura monolítica que se adaptará a la arquitectura de microservicios separando y modularizando el código necesario.
 
+
+
 ### Provisionamiento
 Para desplegar esta aplicación son necesarios una serie de aplicaciones de tipo servidor, que la mayoría de distribuciones no incorporan en su imagen base, es por ello que vamos a realizar un provisionamiento de los paquetes básicos, que necesitarán luego nuestras aplicaciones en las máquinas desplegadas en la red, para ello podemos utilizar varios lenguajes de provisionamiento de máquinas como pueden ser Chef, Salt, Rex, Puppet, Ansible y alguno más que no he nombrado pero en nuestro caso vamos a realizarlo en dos sistemas diferentes, Ansible y Rex.
+
+
 
 ##### Provisionando con Ansible
 Ansible es una aplicación de provisionamiento que permite la instalación de paquetes a través de una consola python la cual puede ejecutar cualquier tipo de instrucción que se define en un lenguaje de descripción llamado en este caso YAML.
@@ -108,6 +125,7 @@ rex deplouNode
 ```
 
 Dependiendo del servicio que queramos provisionar lanzaremos un comando u otro para instalar los paquetes que se hayan codificado en el Rexfile.
+
 
 
 ### Orquestación
@@ -176,6 +194,7 @@ vagrant up --provider=libvirt
 vagrant ssh
 ```
 Es necesario especificar el proveedor.
+
 
 ##### Orquestación vagrant y OpenStack
 Finalmente solo nos queda la orquestación más compleja orquestación en un servidor remoto, en nuestro caso vamos a utilizar la plataforma gratuita trystack la cual nos permite orquestar hasta 3 máquinas virtuales aunque con algunas limitaciones.
@@ -276,6 +295,88 @@ En el caso de querer lanzar y provisionar varias máquinas al mismo tiempo en Ope
 
 Para ello es necesario definir varias máquinas en el vagrantfile y provisionarlas con ansible, el problema de trystack es que solo proporciona una IP por lo que solo podremos provisionar una sola máquina al mismo tiempo sin cambiar esa IP.
 
+
+
+### Contenedores
+En esta sección pasamos a detallar la utilización por parte del proyecto que estamos desarrollando de los contenedores los cuales son una herramienta muy útil para la prueba y el despliegue de algunos de los microservicios de nuestra aplicación, en un primer paso se explicará como proceder con la instalación de un entorno de contenedores como es lxc o docker para instalar estos gestores solo es necesario ejecutar el siguiente comando en la terminal:
+```
+sudo apt-get install lxc
+sudo apt-get install docker.io
+```
+
+A continuación vamos a crear un contenedor de prueba en local para comprobar el correcto funcionamiento del programa y si queremos subirlo al repositorio de imágenes de docker, [Docker Hub](https://hub.docker.com/), para ello seguimos los siguientes pasos en nuestro caso hemos decidido utilizar una distribución muy utilizada en contenedores por su bajo peso(unos 25 MB) y consumo llamada alpine a la cual le vamos a añadir algunos paquetes particulares:
+```
+sudo docker pull alpine
+```
+Con este comando se nos descargaría la imagen de alpine y ya podríamos lanzar un contenedor con la misma, en cambio si lo que queremos es construir nuestro propio contenedor a través de un Dockerfile simplemente es necesario construir el Dockerfile por ejemplo:
+```
+FROM alpine
+MAINTAINER Okynos <pylott@gmail.com>
+WORKDIR /root
+CMD ["/bin/ash"]
+
+RUN apk update && apk upgrade
+RUN apk add git
+RUN apk add curl
+RUN apk add python
+RUN apk add mysql
+```
+Después de escribir el Dockerfile podemos crear nuestro contenedor personal con el siguiente comando:
+```
+sudo docker build -t okynos/alpine .
+```
+Y al finalizar tendríamos nuestro contenedor creado de manera totalmente automática, si queremos hacer algo más en el escribimos:
+```
+sudo docker run -it okynos/alpine sh
+```
+Este comando arrancará el contenedor y permitirá el acceso por consola cediendo el testigo de nuestra shell a la del contenedor, en este paso podemos añadir paquetes a nuestra distribución tal que así:
+```
+apk update
+apk upgrade
+apk add nodejs
+exit
+```
+Una vez nuestra máquina tiene todos los programas o servicios que necesitamos salimos de ella, si deseamos guardar este contenedor para poder instanciarlo en cualquier máquina solo es necesario guardarlo y subirlo a Docker Hub podemos hacerlo así:
+```
+sudo docker ps -a
+sudo docker start ContainerIDDeLContenedor
+sudo docker commit ContainerIDDelContenedor
+```
+
+Tras este paso nos logueamos en docker hub y subimos a nuestra cuenta la imagen con el comando:
+```
+sudo docker login
+sudo docker push okynos/alpine
+```
+Ya estaría finalizado el proceso de prueba y puesta a punto de nuestros contenedores de manera local y los hemos subido a un repositorio público global para poderlos descargar en la máquina remota que estemos provisionando y orquestando para añadirle estos contenedores.
+
+Ahora pasamos a detallar como instanciar los contenedores docker remotamente en Azure para que se realice de manera automática y sencilla, en primer lugar es necesario descargar e instalar docker-machine:
+```
+sudo curl -L https://github.com/docker/machine/releases/download/v0.8.2/docker-machine-`uname -s`-`uname -m` >~/Descargas/docker-machine
+sudo cp docker-machine /usr/local/bin/docker-machine
+```
+El primer comando descargará el binario y el segundo lo colocará en la carpeta de binarios del usuario, continuamos ahora con las órdenes de docker-machine suponiendo que ya tenemos una cuenta lista en Azure y funcionando como es debido:
+```
+sudo docker-machine create  --driver azure  --azure-ssh-user "USUARIO"  --azure-subscription-id "ID_SUBCRIPCIÓN_AZURE" NOMBRE_DE_LA_MÁQUINA_AZURE_EN_MINÚSCULAS
+```
+Este comando de una forma muy simple nos va a crear todos los elementos necesarios dentro de azure para que exista una máquina virtual a la que podamos acceder para instanciar nuestros contenedores docker, si nos da algún error en los certificados podemos repararlos con el siguiente comando:
+```
+sudo docker-machine regenerate-certs NOMBRE_DE_LA_MÁQUINA_EN_MINÚSCULAS
+```
+
+Finalmente podemos acceder a la máquina a través del siguiente comando o por ssh de manera normal:
+```
+sudo docker-machine ssh NOMBRE_DE_LA_MÁQUINA_EN_MINÚSCULAS
+```
+
+Y para finalizar solo necesitamos que dentro de la máquina de azure ejecutemos un contenedor o varios docker:
+```
+sudo docker run -it okynos/alpine
+```
+Que nos descargará y arrancará el contenedor que habiamos pusheado al repositorio de Docker Hub.
+
+
+
 ### Correcciones
 
 * Añadido la documentación a través de una rama gh-pages. -> hito 0
@@ -284,3 +385,7 @@ Para ello es necesario definir varias máquinas en el vagrantfile y provisionarla
 * Añadida arquitectura y breve explicación del desarrollo. -> hito 1
 * Añadido procedimiento de provisionamiento. -> hito 2
 * Añadida aclaración de los microservicios. -> hito 2
+* Añadida documentación de orquestación. -> hito 3
+* Añadida documentación de provisionamiento de la orquestación. -> hito 3
+* Añadida documentación de contenedores. -> hito 4
+* Añadida documentación sobre docker y azure. -> hito 4
