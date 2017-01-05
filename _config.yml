@@ -1,0 +1,8 @@
+title: Nochat
+description: Proyecto desarrollado en la asignatura de Cloud Computing desplegado en la web
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-minimal
+
+gems:
+  - jekyll-mentions
