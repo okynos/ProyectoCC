@@ -263,6 +263,10 @@ ansible-playbook scriptAnsible.yml --private-key ~/keys/keypair.pem
 
 En caso que deseemos provisionar la máquina de openstack al mismo tiempo que la creamos es necesario añadir este código al vagrantfile
 
+
+
+
+
 ```
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "scriptAnsible.yml"
