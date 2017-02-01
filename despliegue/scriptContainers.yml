@@ -1,0 +1,34 @@
+---
+- hosts: Containers-Host
+  become: yes
+  remote_user: vagrant
+
+  tasks:
+  - name: Update repo
+    apt: 
+      update_cache: yes
+
+  - name: Install docker.io package
+    apt: pkg=docker.io state=latest
+
+  - name: Install python pip
+    apt: pkg=python-pip state=latest
+
+  - pip:
+      name: docker-py
+
+  - name: Create RabbitMQ container
+    docker_container:
+      name: rabbit
+      image: maryville/rabbitmq
+      state: started
+
+  - name: Create NodeJS container
+    docker_container:
+      name: node
+      image: okynos/alpinenode
+      state: started
+
+
+
+
