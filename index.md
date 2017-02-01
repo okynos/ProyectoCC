@@ -245,6 +245,7 @@ ansible-playbook scriptAnsible.yml --private-key PATH_A_FICHERO_PEM
 ```
 
 Y si queremos destruir la instancia solo tenemos que hacer:
+
 ```
 sudo vagrant destroy
 ```
@@ -261,6 +262,7 @@ ansible-playbook scriptAnsible.yml --private-key ~/keys/keypair.pem
 ```
 
 En caso que deseemos provisionar la máquina de openstack al mismo tiempo que la creamos es necesario añadir este código al vagrantfile
+
 ```
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "scriptAnsible.yml"
@@ -268,9 +270,11 @@ En caso que deseemos provisionar la máquina de openstack al mismo tiempo que la
     ansible.raw_arguments = ["-i" + floating_ip + ","]
   end
 ```
+
 Dentro de la zona de config de vagrant.
 
 Y modificar ligeramente el script cambiando la línea hosts para que provisiones todas las máquinas que se le pasen como parámetro.
+
 ```
 ---
 - hosts: all
@@ -289,6 +293,7 @@ Y modificar ligeramente el script cambiando la línea hosts para que provisiones
 ```
 
 Finalmente para provisionar la máquina ejecutamos el comando:
+
 ```
 sudo vagrant provision
 ```
@@ -304,16 +309,20 @@ Demostración del provisionamiento y orquestación:
 
 ### Contenedores
 En esta sección pasamos a detallar la utilización por parte del proyecto que estamos desarrollando de los contenedores los cuales son una herramienta muy útil para la prueba y el despliegue de algunos de los microservicios de nuestra aplicación, en un primer paso se explicará como proceder con la instalación de un entorno de contenedores como es lxc o docker para instalar estos gestores solo es necesario ejecutar el siguiente comando en la terminal:
+
 ```
 sudo apt-get install lxc
 sudo apt-get install docker.io
 ```
 
 A continuación vamos a crear un contenedor de prueba en local para comprobar el correcto funcionamiento del programa y si queremos subirlo al repositorio de imágenes de docker, [Docker Hub](https://hub.docker.com/), para ello seguimos los siguientes pasos en nuestro caso hemos decidido utilizar una distribución muy utilizada en contenedores por su bajo peso(unos 25 MB) y consumo llamada alpine a la cual le vamos a añadir algunos paquetes particulares:
+
 ```
 sudo docker pull alpine
 ```
+
 Con este comando se nos descargaría la imagen de alpine y ya podríamos lanzar un contenedor con la misma, en cambio si lo que queremos es construir nuestro propio contenedor a través de un Dockerfile simplemente es necesario construir el Dockerfile por ejemplo:
+
 ```
 FROM alpine
 MAINTAINER Okynos <pylott@gmail.com>
@@ -326,22 +335,30 @@ RUN apk add curl
 RUN apk add python
 RUN apk add mysql
 ```
+
 Después de escribir el Dockerfile podemos crear nuestro contenedor personal con el siguiente comando:
+
 ```
 sudo docker build -t okynos/alpine .
 ```
+
 Y al finalizar tendríamos nuestro contenedor creado de manera totalmente automática, si queremos hacer algo más en el escribimos:
+
 ```
 sudo docker run -it okynos/alpine sh
 ```
+
 Este comando arrancará el contenedor y permitirá el acceso por consola cediendo el testigo de nuestra shell a la del contenedor, en este paso podemos añadir paquetes a nuestra distribución tal que así:
+
 ```
 apk update
 apk upgrade
 apk add nodejs
 exit
 ```
+
 Una vez nuestra máquina tiene todos los programas o servicios que necesitamos salimos de ella, si deseamos guardar este contenedor para poder instanciarlo en cualquier máquina solo es necesario guardarlo y subirlo a Docker Hub podemos hacerlo así:
+
 ```
 sudo docker ps -a
 sudo docker start ContainerIDDeLContenedor
@@ -349,35 +366,44 @@ sudo docker commit ContainerIDDelContenedor
 ```
 
 Tras este paso nos logueamos en docker hub y subimos a nuestra cuenta la imagen con el comando:
+
 ```
 sudo docker login
 sudo docker push okynos/alpine
 ```
+
 Ya estaría finalizado el proceso de prueba y puesta a punto de nuestros contenedores de manera local y los hemos subido a un repositorio público global para poderlos descargar en la máquina remota que estemos provisionando y orquestando para añadirle estos contenedores.
 
 Ahora pasamos a detallar como instanciar los contenedores docker remotamente en Azure para que se realice de manera automática y sencilla, en primer lugar es necesario descargar e instalar docker-machine:
+
 ```
 sudo curl -L https://github.com/docker/machine/releases/download/v0.8.2/docker-machine-`uname -s`-`uname -m` >~/Descargas/docker-machine
 sudo cp docker-machine /usr/local/bin/docker-machine
 ```
+
 El primer comando descargará el binario y el segundo lo colocará en la carpeta de binarios del usuario, continuamos ahora con las órdenes de docker-machine suponiendo que ya tenemos una cuenta lista en Azure y funcionando como es debido:
+
 ```
 sudo docker-machine create  --driver azure  --azure-ssh-user "USUARIO"  --azure-subscription-id "ID_SUBCRIPCIÓN_AZURE" NOMBRE_DE_LA_MÁQUINA_AZURE_EN_MINÚSCULAS
 ```
+
 Este comando de una forma muy simple nos va a crear todos los elementos necesarios dentro de azure para que exista una máquina virtual a la que podamos acceder para instanciar nuestros contenedores docker, si nos da algún error en los certificados podemos repararlos con el siguiente comando:
 ```
 sudo docker-machine regenerate-certs NOMBRE_DE_LA_MÁQUINA_EN_MINÚSCULAS
 ```
 
 Finalmente podemos acceder a la máquina a través del siguiente comando o por ssh de manera normal:
+
 ```
 sudo docker-machine ssh NOMBRE_DE_LA_MÁQUINA_EN_MINÚSCULAS
 ```
 
 Y para finalizar solo necesitamos que dentro de la máquina de azure ejecutemos un contenedor o varios docker:
+
 ```
 sudo docker run -it okynos/alpine
 ```
+
 Que nos descargará y arrancará el contenedor que habiamos pusheado al repositorio de Docker Hub.
 
 
@@ -395,32 +421,43 @@ Unas breves capturas del despliegue con vagrant se incorporarán a la documentac
 Pasamos ahora a detallar todo el proceso realizado para llevar a cabo el despliegue de toda la infraestructura empezando por lo más básico del proyecto, vamos a detallar desde el principio para que esta parte del documento sirva como guía a todo aquel que quiera desplegar la estructura comentada anteriormente o alguna similar.
 
 En primer lugar vamos a crear un par de claves nuevas para utilizarlas con vagrant, para ello abrimos una terminal y ejecutamos el siguiente comando:
+
 ```
 ssh-keygen -t rsa -b 4096 -C "Tu_Email@Tu_Dominio.com"
 ```
+
 Le damos un nombre a la llave, si nos pide una clave y sólo la vamos a usar con vagrant se puede dejar en blanco para que vagrant no esté constantemente pidiendonos la clave de esta llave.
 
 Una vez hemos generado nuestra llave para usarla con vagrant vamos a instalar vagrant 1.8.7 la cual es la versión que mejor trabaja con los plugin que existen actualmente (1/02/2017), para ello solo tenemos que dirigirnos a la [página de vagrant](https://www.vagrantup.com/) y descargar el [fichero](https://releases.hashicorp.com/vagrant/1.8.7/) de las releases antiguas que corresponda con nuestra versión, en nuestro caso hemos descargado "vagrant_1.8.7_x86_64.deb" tras descargarlo lo podemos instalar con el comando:
+
 ```
 sudo dpkg -i vagrant_1.8.7_x86_64.deb
 ```
+
 Una vez se nos haya instalado vagrant correctamente podremos juguetear con el y los archivos Vagrantfile asociados pero primero vamos a instalar el plugin necesario para conectar vagrant y azure, con el siguiente comando lo podremos instalar de una manera sencilla:
+
 ```
 sudo vagrant plugin install vagrant-azure --plugin-version '2.0.0.pre1' --plugin-prerelease
 ```
+
 Una vez se nos confirme que se ha instalado el plugin vamos a instalar la parte de ansible para ello debemos instalar python y ansible:
+
 ```
 sudo apt-get install python python-pip
 sudo pip install paramiko PyYAML jinja2 httplib2 ansible
 ```
+
 En algunos casos y para el que nos atañe es necesario la versión de ansible que nos proporciona nuestra distribución o pip puede no ser suficientemente reciente para manejar los módulos de Docker, los cuales se encuentran en la versión 2.1 en adelante es por ello que es mejor instalar la última versión de ansible de la siguiente forma:
 Descargamos la última versión del [siguiente enlace](http://releases.ansible.com/ansible/), una vez se ha descargado lo descomprimimos y entramos en el directorio y ejecutamos los siguientes comandos:
+
 ```
 make
 sudo make install
 ```
+
 Si todo ha funcionado correctamente tendremos ansible en su última version(latest).
 Una vez hemos instalado todo esto ya es el momento de meterse en materia en cuanto a la realización de un vagrantfile que nos cree la estructura que deseamos, un ejemplo funcional de la estructura del vagrantfile es la siguiente:
+
 ```
 servers=[
   {
@@ -466,12 +503,14 @@ Vagrant.configure('2') do |config|
 
 end
 ```
+
 Vamos a detallar el vagrantfile que hemos dispuesto, en este caso el vagrantfile consta de un array llamado servers que contendrá los valores relativos a todos lás máquinas Azure que se desean crear, en este caso concreto se tratan de dos máquina una denominada "Containers-Host", como su nombre indica contendrá contenedores Docker para virtualización ligera de varias aplicaciones y que se provisionará con un script de ansible preparado para ello denominado "scriptContainers.yml". Por otra parte tenemos otra máquina que se encargará de almacenar la base de datos, esta máquina se denominará "Database-Host" en Azure y se provisionará mediante el script denominado "scriptMariaDB.yml", tras pasar esta parte comienza la parte de configuración de azure la cual se encarga de definir el usuario ssh que se usará, la clave que subirá a las máquinas creadas para conectarse por ssh y la caja que utilizará como base en azure.
 
 Ahora se pasa a la parte del bucle de creación de las instancias en el cual se toman las variables definidas en la llamada a vagrant y se utilizan para crear las dos máquinas con un plan básico y en una distribución de Debian 8 ya que en el ámbito de los servidores suele ser más estable y fácil de instalar y configurar.
 Tras este bucle se entra en otro que lo que hará será provisionar máquina a máquina con los scripts definidos en cada una de las máquinas.
 
 Una vez se ha detallado el script de vagrant pasamos a los scripts de provisionamiento que vamos a utilizar:
+
 ```
 ---
 - hosts: Containers-Host
@@ -504,17 +543,22 @@ Una vez se ha detallado el script de vagrant pasamos a los scripts de provisiona
       image: okynos/alpinenode
       state: started
 ```
+
 En nuestro caso vamos a detallar sólo el script más complejo por no repetir información dado que el script de MariaDB solo incorpora un par de llamadas a apt que se realizan de la misma manera que en este script, aún así el script de MariaDB siempre puede ser consultado [aquí](https://github.com/okynos/ProyectoCC/blob/master/despliegue/scriptMariaDB.yml)
 En el script que hemos dispuesto se puede observar una parte que define los hosts que se provisionarán con este script dado que solo vamos a crear una instancia para contenedores solo hemos definido un host, definimos el usuario vagrant y pedimos permisos de super usuario para ejecutar algunas instalaciones, tras esto se realiza una actualización de los repositorios de la distribución debian los cuales pueden venir sin actualizar, tras esto instalamos Docker en la máquina para poder lanzar las máquinas Docker y python-pip para poder instalar el complemento necesario por ansible para utilizar docker llamado docker-py, tras instalar todo lo necesario utilizamos un módulo de Docker bastante reciente de ansible que nos permite definir y lanzar contenedores dentro de la máquina que se está provisionando, y simplemente lanzamos dos contenedores uno que se centrará en el tratamiento de colas con RabbitMQ y otro que se centrará en la aplicación que hemos desarrollado en NodeJS.
 
 Una vez tenemos listos todos los scripts para nuestro despliegue lanzamos vagrant de la siguiente forma:
+
 ```
 sudo AZURE_SUBSCRIPTION_ID=<SUBSCRIPTION_ID> AZURE_CLIENT_ID=<CLIENT_ID> AZURE_CLIENT_SECRET=<CLIENT_SECRET> AZURE_TENANT_ID=<TENANT_ID> vagrant up --provider=azure
 ```
+
 Debemos completar los campos entre <> para conectarnos con azure, este comando comenzará a crearnos las máquinas virtuales y tras desplegarlas nos las va a provisionar mediante los scripts que hemos definido anteriormente, por lo tanto si hemos llegado hasta este punto nuestra red se ha desplegado correctamente y podremos acceder a los servidores que hemos creado en azure con el comando:
+
 ```
 sudo AZURE_SUBSCRIPTION_ID=<SUBSCRIPTION_ID> AZURE_CLIENT_ID=<CLIENT_ID> AZURE_CLIENT_SECRET=<CLIENT_SECRET> AZURE_TENANT_ID=<TENANT_ID> vagrant ssh <HOSTNAME>
 ```
+
 Algunas capturas del proceso realizado en una terminal son las siguientes:
 ![Captura 1 de ejecución en vagrant](https://raw.githubusercontent.com/okynos/ProyectoCC/gh-pages/images/vagrant1.png "Creando las máquinas en azure con vagrant")
 
@@ -526,7 +570,7 @@ En algunos casos puede que Azure no permita el acceso a vagrant para permitirle 
 En cuanto a los detalles sobre los servicios externos se puede observar en las siguientes capturas como se ha realizado de manera completa la inscripción en los servicios de mLab y Logz:
 ![Captura de Mongo Lab](https://raw.githubusercontent.com/okynos/ProyectoCC/gh-pages/images/mlab.png "Captura de mLab en el que se ha creado la base de datos nochatdb")
 
-![Captura de Logz](https://github.com/okynos/ProyectoCC/blob/gh-pages/images/logz.png "Captura de logz en la que se puede observar las instrucciones de conexión con Docker")
+![Captura de Logz](https://raw.githubusercontent.com/okynos/ProyectoCC/gh-pages/images/logz.png "Captura de logz en la que se puede observar las instrucciones de conexión con Docker")
 
 Tras estas capturas se puede contrastar como se han registrado los servicios en la nube y están listos para ser usados por la aplicación que se está desarrollando.
 
