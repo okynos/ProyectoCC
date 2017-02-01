@@ -1,0 +1,9 @@
+[rabbit]
+RabbitMQ-Host
+
+[node]
+NodeJS-Host 
+
+[all:vars]
+ansible_python_interpreter=/opt/bin/python
+
