@@ -1,0 +1,15 @@
+---
+- hosts: Database-Host
+  become: yes
+  remote_user: vagrant
+  tasks:
+
+  - name: Update repo
+    apt: 
+      update_cache: yes
+
+  - name: Install MariaDB-server
+    apt: pkg=mariadb-server state=installed
+
+  - name: Install MariaDB-client
+    apt: pkg=mariadb-client state=installed
